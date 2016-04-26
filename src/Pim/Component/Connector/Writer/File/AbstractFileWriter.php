@@ -29,9 +29,6 @@ abstract class AbstractFileWriter extends AbstractConfigurableStepElement implem
     /** @var StepExecution */
     protected $stepExecution;
 
-    /** @var string */
-    protected $resolvedFilePath;
-
     /** @var array */
     protected $filePathResolverOptions;
 
@@ -60,7 +57,6 @@ abstract class AbstractFileWriter extends AbstractConfigurableStepElement implem
     public function setFilePath($filePath)
     {
         $this->filePath = $filePath;
-        $this->resolvedFilePath = null;
 
         return $this;
     }
@@ -82,11 +78,7 @@ abstract class AbstractFileWriter extends AbstractConfigurableStepElement implem
      */
     public function getPath()
     {
-        if (null === $this->resolvedFilePath) {
-            $this->resolvedFilePath = $this->filePathResolver->resolve($this->filePath, $this->filePathResolverOptions);
-        }
-
-        return $this->resolvedFilePath;
+        return $this->filePathResolver->resolve($this->filePath, $this->filePathResolverOptions);
     }
 
     /**

@@ -58,23 +58,29 @@ class ArchivableFileWriterArchiver extends AbstractFilesystemArchiver
     }
 
     /**
-     * Verify if the writer is usable or not
-     *
-     * @param ItemWriterInterface $writer
-     *
-     * @return bool
-     */
-    protected function isWriterUsable(ItemWriterInterface $writer)
-    {
-        return $writer instanceof ArchivableWriterInterface && count($writer->getWrittenFiles()) > 1;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getName()
     {
         return 'archive';
+    }
+
+    /**
+     * Check if the job execution is supported
+     *
+     * @param JobExecution $jobExecution
+     *
+     * @return bool
+     */
+    public function supports(JobExecution $jobExecution)
+    {
+        foreach ($jobExecution->getJobInstance()->getJob()->getSteps() as $step) {
+            if ($step instanceof ItemStep && $this->isWriterUsable($step->getWriter())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -103,20 +109,14 @@ class ArchivableFileWriterArchiver extends AbstractFilesystemArchiver
     }
 
     /**
-     * Check if the job execution is supported
+     * Verify if the writer is usable or not
      *
-     * @param JobExecution $jobExecution
+     * @param ItemWriterInterface $writer
      *
      * @return bool
      */
-    public function supports(JobExecution $jobExecution)
+    protected function isWriterUsable(ItemWriterInterface $writer)
     {
-        foreach ($jobExecution->getJobInstance()->getJob()->getSteps() as $step) {
-            if ($step instanceof ItemStep && $this->isWriterUsable($step->getWriter())) {
-                return true;
-            }
-        }
-
-        return false;
+        return $writer instanceof ArchivableWriterInterface && count($writer->getWrittenFiles()) > 1;
     }
 }

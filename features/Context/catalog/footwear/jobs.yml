@@ -298,6 +298,7 @@ jobs:
         type:      export
         configuration:
             withHeader: true
+            linesPerFiles: 10000
             filePath: /tmp/family.xlsx
     xlsx_footwear_category_export:
         connector: Akeneo XLSX Connector
@@ -306,6 +307,7 @@ jobs:
         type:      export
         configuration:
             withHeader: true
+            linesPerFiles: 10000
             filePath: /tmp/category.xlsx
     xlsx_footwear_attribute_export:
         connector: Akeneo XLSX Connector
@@ -314,6 +316,7 @@ jobs:
         type:      export
         configuration:
             withHeader: true
+            linesPerFiles: 10000
             filePath: /tmp/attribute.xlsx
     xlsx_footwear_option_export:
         connector: Akeneo XLSX Connector
@@ -322,6 +325,7 @@ jobs:
         type:      export
         configuration:
             withHeader: true
+            linesPerFiles: 10000
             filePath: /tmp/option.xlsx
     xlsx_footwear_association_type_export:
         connector: Akeneo XLSX Connector
@@ -330,4 +334,5 @@ jobs:
         type:      export
         configuration:
             withHeader: true
+            linesPerFiles: 10000
             filePath: /tmp/association_type.xlsx
