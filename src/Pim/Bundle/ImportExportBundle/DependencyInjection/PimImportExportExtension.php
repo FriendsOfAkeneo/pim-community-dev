@@ -25,15 +25,16 @@ class PimImportExportExtension extends Extension
         $this->processConfiguration($configuration, $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('grid.yml');
-        $loader->load('forms.yml');
-        $loader->load('form_types.yml');
         $loader->load('controllers.yml');
-        $loader->load('normalizers.yml');
-        $loader->load('repositories.yml');
-        $loader->load('managers.yml');
         $loader->load('datagrid_listeners.yml');
         $loader->load('factory.yml');
+        $loader->load('form_types.yml');
+        $loader->load('forms.yml');
+        $loader->load('grid.yml');
+        $loader->load('managers.yml');
+        $loader->load('normalizers.yml');
+        $loader->load('providers.yml');
+        $loader->load('repositories.yml');
         $loader->load('twig.yml');
     }
 }
