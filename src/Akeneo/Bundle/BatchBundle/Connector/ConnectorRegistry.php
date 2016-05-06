@@ -190,7 +190,7 @@ class ConnectorRegistry
      * @param array  $connector
      * @param string $jobName
      *
-     * @return Job|null
+     * @return JobInterface|null
      */
     private function getConnectorJob($connector, $jobName)
     {
