@@ -202,3 +202,6 @@
 - Change constructor of `Pim\Bundle\EnrichBundle\Connector\Processor\QuickExport\ProductToFlatArrayProcessor`, add `Symfony\Component\Security\Core\User\UserProviderInterface` and `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface`
 - Context option `filter_type` of `Pim\Component\Connector\Normalizer\Flat\ProductNormalizer` changed to `filter_types` and now accepts an array of filter names instead of just one filter name
 - Context option `filter_type` of `Pim\Component\Catalog\Normalizer\Structured\ProductNormalizer` changed to `filter_types` and  now accepts an array of filter names instead of just one filter name
+- Change constructor of `Pim\Bundle\ImportExportBundle\Datagrid\JobDatagridProvider`, add `Pim\Bundle\ImportExportBundle\Provider\JobLabelProvider`
+- Change constructor of `Pim\Bundle\ImportExportBundle\Normalizer\JobExecutionNormalizer`, add `Pim\Bundle\ImportExportBundle\Provider\JobLabelProvider`
+- Change constructor of `Pim\Bundle\ImportExportBundle\Normalizer\StepExecutionNormalizer`, add `Pim\Bundle\ImportExportBundle\Provider\JobLabelProvider`
