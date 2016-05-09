@@ -155,7 +155,7 @@ class Base extends Page
         $separator = $elt->find('css', '.separator');
         $name      = $elt->find('css', '.product-name');
 
-        if (!$subtitle || !$separator || !$name) {
+        if (null === $subtitle || null === $separator || null === $name) {
             $titleElt = $this->spin(function () {
                 return $this->getElement('Product title')->find('css', '.product-label');
             }, 'Could not find the page title');
@@ -182,7 +182,7 @@ class Base extends Page
     {
         $button = $this->getButton($locator);
 
-        if (!$button) {
+        if (null === $button) {
             $button = $this->find(
                 'named',
                 [
@@ -204,7 +204,7 @@ class Base extends Page
      *
      * @param string $locator
      *
-     * @return NodeElement
+     * @return NodeElement|null
      */
     public function getButton($locator)
     {
@@ -232,13 +232,9 @@ class Base extends Page
      */
     public function confirmDialog()
     {
-        $element = $this->getConfirmDialog();
-
-        $button = $element->find('css', '.ok');
-
-        if (!$button) {
-            throw new \Exception('Could not find the confirmation button');
-        }
+        $button = $this->spin(function () {
+            return $this->getConfirmDialog()->find('css', '.ok');
+        }, 'Could not find the confirmation button');
 
         $button->click();
     }
@@ -254,7 +250,7 @@ class Base extends Page
     {
         $element = $this->getElement('Dialog');
 
-        if (!$element) {
+        if (null === $element) {
             throw new \Exception('Could not find dialog window');
         }
 
@@ -296,7 +292,7 @@ class Base extends Page
     {
         $element = $this->getElement('Dialog');
 
-        if (!$element) {
+        if (null === $element) {
             throw new \Exception('Could not find dialog window');
         }
 
@@ -304,7 +300,7 @@ class Base extends Page
         // (waiting for BAP to get the 'Cancel' button on grid actions)
         $button = $element->find('css', 'a.close');
 
-        if (!$button) {
+        if (null === $button) {
             throw new \Exception('Could not find the cancel button');
         }
 

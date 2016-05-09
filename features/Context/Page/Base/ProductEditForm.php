@@ -289,6 +289,11 @@ class ProductEditForm extends Form
             return $fieldContainer->find('css', 'a.select2-choice');
         }, sprintf('Could not find select2 widget inside "%s"', $fieldContainer->getParent()->getHtml()));
 
+        $this->spin(function () use ($fieldContainer, $link) {
+            return $link->find('css', '.select2-chosen')->getText() ===
+                   $fieldContainer->find('css', 'input.select-field')->getValue();
+        }, sprintf('Value has not been filled by select2', $link->getHtml()));
+
         $link->click();
 
         $item = $this->spin(function () use ($value) {
