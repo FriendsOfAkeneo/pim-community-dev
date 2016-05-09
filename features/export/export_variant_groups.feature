@@ -1,5 +1,5 @@
 @javascript
-Feature: Export variant groups
+Feature: Export variant groups in CSV
   In order to be able to access and modify groups data outside PIM
   As a product manager
   I need to be able to export variant groups

@@ -1,4 +1,4 @@
-Feature: Export groups
+Feature: Export groups in CSV
   In order to be able to access and modify groups data outside PIM
   As a product manager
   I need to be able to export groups (not variant groups)
