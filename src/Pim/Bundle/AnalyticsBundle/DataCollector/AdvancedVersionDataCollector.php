@@ -3,8 +3,7 @@
 namespace Pim\Bundle\AnalyticsBundle\DataCollector;
 
 use Akeneo\Component\Analytics\DataCollectorInterface;
-use Pim\Bundle\AnalyticsBundle\Provider\ServerVersionProvider;
-use Pim\Bundle\AnalyticsBundle\Provider\StorageVersionProvider;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Returns advanced data about the host server of the PIM
@@ -18,22 +17,30 @@ use Pim\Bundle\AnalyticsBundle\Provider\StorageVersionProvider;
  */
 class AdvancedVersionDataCollector implements DataCollectorInterface
 {
-    /** @var ServerVersionProvider */
-    protected $serverVersionProvider;
+    /** @const string */
+    const DIVERGENT_MARIADB_VERSION = '10';
 
-    /** @var StorageVersionProvider */
-    protected $storageVersionProvider;
+    /** @var string */
+    protected $mongoDatabase;
+
+    /** @var string */
+    protected $mongoServer;
+
+    /** @var RequestStack */
+    protected $requestStack;
 
     /**
-     * @param StorageVersionProvider $storageVersionProvider
-     * @param ServerVersionProvider  $serverVersionProvider
+     * AdvancedVersionDataCollector constructor.
+     *
+     * @param RequestStack $requestStack
+     * @param string|null  $mongoServer
+     * @param string|null  $mongoDatabase
      */
-    public function __construct(
-        StorageVersionProvider $storageVersionProvider,
-        ServerVersionProvider $serverVersionProvider
-    ) {
-        $this->storageVersionProvider = $storageVersionProvider;
-        $this->serverVersionProvider  = $serverVersionProvider;
+    public function __construct(RequestStack $requestStack, $mongoServer = null, $mongoDatabase = null)
+    {
+        $this->requestStack  = $requestStack;
+        $this->mongoServer   = $mongoServer;
+        $this->mongoDatabase = $mongoDatabase;
     }
 
     /**
@@ -42,8 +49,78 @@ class AdvancedVersionDataCollector implements DataCollectorInterface
     public function collect()
     {
         return array_merge(
-            $this->storageVersionProvider->provide(),
-            $this->serverVersionProvider->provide()
+            $this->getStorageVersion(),
+            $this->getServerVersion()
         );
+    }
+
+    /**
+     * Returns the server version.
+     *
+     * @return array
+     */
+    protected function getServerVersion()
+    {
+        $version = [];
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (null !== $request) {
+            $version = ['server_version' => $request->server->get('SERVER_SOFTWARE')];
+        }
+
+        return $version;
+    }
+
+    /**
+     * Returns MySQL/MariaDB version and, if used, MongoDB version.
+     *
+     * @return array
+     */
+    public function getStorageVersion()
+    {
+        $version = $this->getSQLVersion();
+
+        if (null !== $this->mongoServer && null !== $this->mongoDatabase) {
+            $version = array_merge(
+                $version,
+                $this->getMongoDBVersion()
+            );
+        }
+
+        return $version;
+    }
+
+    /**
+     * Returns the version of MySQL or MariaDB.
+     *
+     * @return array
+     */
+    protected function getSQLVersion()
+    {
+        $version = mysqli_get_client_info();
+
+        if (true === version_compare($version, static::DIVERGENT_MARIADB_VERSION, '>=')) {
+            $storage = 'mariadb_version';
+        } else {
+            $storage = 'mysql_version';
+        }
+
+        return [$storage => $version];
+    }
+
+    /**
+     * Returns the version of MongoDB, if used.
+     *
+     * @return array
+     */
+    protected function getMongoDBVersion()
+    {
+        $client   = new \MongoClient($this->mongoServer);
+        $database = $this->mongoDatabase;
+
+        $mongo       = new \MongoDB($client, $database);
+        $mongodbInfo = $mongo->command(['serverStatus' => true]);
+
+        return ['mongodb_version' => $mongodbInfo['version']];
     }
 }

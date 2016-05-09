@@ -31,7 +31,7 @@ services:
         class: '%pim_analytics.data_collector.operating_system.class%'
         tags:
             - { name: pim_analytics.data_collector, type: update_checker }
-            - { name: pim_analytics.data_collector, type: system_info_advanced_report }
+            - { name: pim_analytics.data_collector, type: system_info_report }
 
     pim_analytics.data_collector.version:
         class: '%pim_analytics.data_collector.version.class%'
@@ -44,18 +44,10 @@ services:
             - { name: pim_analytics.data_collector, type: update_checker }
             - { name: pim_analytics.data_collector, type: system_info_report }
 
-    pim_analytics.data_collector.advanced_version:
-        class: '%pim_analytics.data_collector.advanced_version.class%'
-        arguments:
-            - '@pim_analytics.provider.storage_version'
-            - '@pim_analytics.provider.server_version'
-        tags:
-            - { name: pim_analytics.data_collector, type: system_info_advanced_report }
-
     pim_analytics.data_collector.php:
         class:  '%pim_analytics.data_collector.php_info.class%'
         tags:
-            - { name: pim_analytics.data_collector, type: system_info_advanced_report }
+            - { name: pim_analytics.data_collector, type: system_info_report }
 
     pim_analytics.data_collector.database:
         class: '%pim_analytics.data_collector.database.class%'
@@ -69,7 +61,6 @@ services:
         tags:
             - { name: pim_analytics.data_collector, type: update_checker }
             - { name: pim_analytics.data_collector, type: system_info_report }
-            - { name: pim_analytics.data_collector, type: system_info_advanced_report }
 
     pim_analytics.data_collector.bundles:
         class: '%pim_analytics.data_collector.bundles.class%'
@@ -77,4 +68,3 @@ services:
             - '%kernel.bundles%'
         tags:
             - { name: pim_analytics.data_collector, type: system_info_report }
-            - { name: pim_analytics.data_collector, type: system_info_advanced_report }

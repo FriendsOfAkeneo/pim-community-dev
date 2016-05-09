@@ -3,15 +3,16 @@
 namespace spec\Pim\Bundle\AnalyticsBundle\DataCollector;
 
 use PhpSpec\ObjectBehavior;
-use Pim\Bundle\AnalyticsBundle\Provider\ServerVersionProvider;
-use Pim\Bundle\AnalyticsBundle\Provider\StorageVersionProvider;
 use Prophecy\Argument;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\ServerBag;
 
 class AdvancedVersionDataCollectorSpec extends ObjectBehavior
 {
-    function let(StorageVersionProvider $storageVersionProvider, ServerVersionProvider $serverVersionProvider)
+    function let(RequestStack $requestStack)
     {
-        $this->beConstructedWith($storageVersionProvider, $serverVersionProvider);
+        $this->beConstructedWith($requestStack);
     }
 
     function it_is_initializable()
@@ -20,17 +21,29 @@ class AdvancedVersionDataCollectorSpec extends ObjectBehavior
         $this->shouldHaveType('Akeneo\Component\Analytics\DataCollectorInterface');
     }
 
-    function it_collects_pim_storage_versions_and_server_versions($storageVersionProvider, $serverVersionProvider)
-    {
-        $storageVersionProvider->provide()->willReturn(['mysql_version' => '5.6.30', 'mongodb_version' => '2.4.14']);
-        $serverVersionProvider->provide()->willReturn(['server_version' => 'Apache/2.4.18 (Debian)']);
+    function it_provides_server_and_sql_versions_when_pim_uses_orm(
+        $requestStack,
+        Request $request,
+        ServerBag $serverBag
+    ) {
+        $requestStack->getCurrentRequest()->willReturn($request);
 
-        $this->collect()->shouldReturn(
-            [
-                'mysql_version'   => '5.6.30',
-                'mongodb_version' => '2.4.14',
-                'server_version'  => 'Apache/2.4.18 (Debian)',
-            ]
-        );
+        $request->server = $serverBag;
+        $serverBag->get('SERVER_SOFTWARE')->willReturn('Apache/2.4.12 (Debian)');
+
+        $this->collect()->shouldHaveCount(2);
+        $this->collect()->shouldHaveKeyWithValue('server_version', 'Apache/2.4.12 (Debian)');
+    }
+
+    function it_does_not_provides_server_version_of_pim_host_if_request_is_null(
+        $requestStack,
+        ServerBag $serverBag
+    ) {
+        $requestStack->getCurrentRequest()->willReturn(null);
+
+        $serverBag->get(Argument::type('string'))->shouldNotBeCalled();
+
+        $this->collect()->shouldHaveCount(1);
+
     }
 }

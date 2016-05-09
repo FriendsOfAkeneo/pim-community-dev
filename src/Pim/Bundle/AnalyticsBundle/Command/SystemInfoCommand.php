@@ -36,23 +36,23 @@ class SystemInfoCommand extends ContainerAwareCommand
         $dataCollector = $this->getContainer()->get('pim_analytics.data_collector.chained');
         $translator    = $this->getContainer()->get('translator');
 
-        $collectedData = $dataCollector->collect('system_info_advanced_report');
+        $collectedData = $dataCollector->collect('system_info_report');
 
         $decorator = new SystemInfoStyle($input, $output);
 
         $decorator->title($translator->trans('pim_analytics.system_info.title'));
-        $decorator->table([], $this->formatCollectedData($collectedData, $translator));
+        $decorator->table([], $this->formatCollectedData($translator, $collectedData));
     }
 
     /**
      * Formats the collected data to be ready to display by the Table component.
      *
-     * @param array               $collectedData
      * @param TranslatorInterface $translator
+     * @param array               $collectedData
      *
      * @return array
      */
-    protected function formatCollectedData(array $collectedData, TranslatorInterface $translator)
+    protected function formatCollectedData(TranslatorInterface $translator, array $collectedData)
     {
         $formattedData = [];
 

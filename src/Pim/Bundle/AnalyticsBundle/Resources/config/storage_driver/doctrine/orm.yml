@@ -1,3 +1,7 @@
 services:
-    pim_analytics.provider.storage_version:
-        class: '%pim_analytics.provider.storage_version.class%'
+    pim_analytics.data_collector.advanced_version:
+        class: '%pim_analytics.data_collector.advanced_version.class%'
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: pim_analytics.data_collector, type: system_info_report }

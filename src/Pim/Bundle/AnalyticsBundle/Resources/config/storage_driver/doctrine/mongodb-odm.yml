@@ -1,6 +1,9 @@
 services:
-    pim_analytics.provider.storage_version:
-        class: '%pim_analytics.provider.storage_version.class%'
+    pim_analytics.data_collector.advanced_version:
+        class: '%pim_analytics.data_collector.advanced_version.class%'
         arguments:
+            - '@request_stack'
             - '%mongodb_server%'
             - '%mongodb_database%'
+        tags:
+            - { name: pim_analytics.data_collector, type: system_info_report }
