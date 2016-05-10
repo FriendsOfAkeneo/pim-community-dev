@@ -648,10 +648,10 @@ interface AttributeInterface extends
     /**
      * {@inheritdoc}
      */
-    public function setIsDisplayable($value);
+    public function setIsEditable($value);
 
     /**
      * {@inheritdoc}
      */
-    public function isDisplayable();
+    public function isEditable();
 }
