@@ -204,3 +204,10 @@
 - Remove `Pim\Bundle\InstallerBundle\DataFixtures\*`
 - Remove `Pim\Bundle\InstallerBundle\FixtureLoader\*`
 - Change constructor of `Pim\Bundle\CatalogBundle\Doctrine\MongoDBODM\Filter\CompletenessFilter`, add `Pim\Component\Catalog\Repository\ChannelRepositoryInterface`
+- Change constructor of `Pim\Component\Catalog\Updater\AttributeUpdater`, remove `Pim\Component\ReferenceData\ConfigurationRegistryInterface` and the list of reference data types
+- Move class `Pim\Component\Catalog\Normalizer\Structured\ReferenceDataNormalizer` to `Pim\Component\ReferenceData\Normalizer\Structured\ReferenceDataNormalizer`
+- Move class `Pim\Component\Connector\Normalizer\Flat\ReferenceDataNormalizer` to `Pim\Component\ReferenceData\Normalizer\Flat\ReferenceDataNormalizer`
+- Move class `Pim\Component\Catalog\Denormalizer\Structured\ProductValue\ReferenceDataDenormalizer` to `Pim\Component\ReferenceData\Denormalizer\Structured\ProductValue\ReferenceDataDenormalizer`
+- Move class `Pim\Component\Catalog\Denormalizer\Structured\ProductValue\ReferenceDataCollectionDenormalizer` to `Pim\Component\ReferenceData\Denormalizer\Structured\ProductValue\ReferenceDataCollectionDenormalizer`
+- Move class `Pim\Component\Connector\Denormalizer\Flat\ProductValue\ReferenceDataDenormalizer` to `Pim\Component\ReferenceData\Denormalizer\Flat\ProductValue\ReferenceDataDenormalizer`
+- Move class `Pim\Component\Connector\Denormalizer\Flat\ProductValue\ReferenceDataCollectionDenormalizer` to `Pim\Component\ReferenceData\Denormalizer\Flat\ProductValue\ReferenceDataCollectionDenormalizer`
