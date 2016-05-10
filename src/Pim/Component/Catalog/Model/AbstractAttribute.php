@@ -1072,6 +1072,6 @@ abstract class AbstractAttribute implements AttributeInterface
      */
     public function isEditable()
     {
-        return $this->getProperty('is_editable');
+        return (bool) $this->getProperty('is_editable');
     }
 }
