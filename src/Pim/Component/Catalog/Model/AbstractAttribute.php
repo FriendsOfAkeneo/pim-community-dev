@@ -1060,9 +1060,9 @@ abstract class AbstractAttribute implements AttributeInterface
     /**
      * {@inheritdoc}
      */
-    public function setIsEditable($value)
+    public function setIsReadOnly($value)
     {
-        $this->setProperty('is_editable', $value);
+        $this->setProperty('is_read_only', $value);
 
         return $this;
     }
@@ -1070,8 +1070,8 @@ abstract class AbstractAttribute implements AttributeInterface
     /**
      * {@inheritdoc}
      */
-    public function isEditable()
+    public function isReadOnly()
     {
-        return (bool) $this->getProperty('is_editable');
+        return (bool) $this->getProperty('is_read_only');
     }
 }
