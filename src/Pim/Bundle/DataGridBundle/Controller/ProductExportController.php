@@ -77,6 +77,38 @@ class ProductExportController
      */
     public function indexAction()
     {
+        $displayedColumnsOnly = $this->request->get('_displayedColumnsOnly');
+        $jobCode              = $this->request->get('_jobCode');
+        $jobInstance          = $this->jobInstanceRepo->findOneBy(['code' => $jobCode]);
+
+        if (null === $jobInstance) {
+            throw new \RuntimeException(sprintf('Jobinstance "%s" is not well configured', $jobCode));
+        }
+
+        $filters     = $this->gridFilterAdapter->adapt($this->request);
+        $mainContext = $this->getContextParameters();
+
+        if ($displayedColumnsOnly) {
+            $mainContext = array_merge(
+                $mainContext,
+                [
+                    'columns' => $this->datagridManager->getConfigurationForGrid('product-grid')['columns']
+                ]
+            );
+        }
+
+        $configuration = [
+            'filters'     => $filters,
+            'mainContext' => $mainContext
+        ];
+
+        $this->jobLauncher->launch($jobInstance, $this->getUser(), $configuration);
+
+        return new Response();
+    }
+
+    public function indexColumnsAction()
+    {
         $jobCode     = $this->request->get('_jobCode');
         $jobInstance = $this->jobInstanceRepo->findOneBy(['code' => $jobCode]);
 
@@ -85,14 +117,20 @@ class ProductExportController
         }
 
         $filters       = $this->gridFilterAdapter->adapt($this->request);
+        $mainContext   = array_merge(
+            $this->getContextParameters(),
+            [
+                'columns' => $this->datagridManager->getConfigurationForGrid('product-grid')['columns']
+            ]);
         $configuration = [
             'filters'     => $filters,
-            'mainContext' => $this->getContextParameters()
+            'mainContext' => $mainContext,
         ];
 
         $this->jobLauncher->launch($jobInstance, $this->getUser(), $configuration);
 
         return new Response();
+
     }
 
     /**

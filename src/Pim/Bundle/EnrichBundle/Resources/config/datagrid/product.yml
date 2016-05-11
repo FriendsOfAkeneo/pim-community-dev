@@ -126,7 +126,7 @@ datagrid:
                     empty_selection: pim_datagrid.mass_action.delete.empty_selection
                 launcherOptions:
                     group: quick_export
-            quick_export_context_csv:
+            quick_export_grid_context_csv:
                 type: export
                 label: pim.grid.mass_action.quick_export.csv_context
                 icon: download
@@ -135,7 +135,7 @@ datagrid:
                 route_parameters:
                     _format: csv
                     _contentType: text/csv
-                    _jobCode: csv_product_quick_export
+                    _jobCode: csv_product_grid_content_quick_export
                 context:
                     withHeader: true
                 messages:
@@ -152,13 +152,14 @@ datagrid:
                     _format: xlsx
                     _contentType: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
                     _jobCode: xlsx_product_quick_export
+                    _displayedColumnsOnly: false
                 context:
                     withHeader: true
                 messages:
                     empty_selection: pim_datagrid.mass_action.delete.empty_selection
                 launcherOptions:
                     group: quick_export
-            quick_export_context_xlsx:
+            quick_export_grid_context_xlsx:
                 type: export
                 label: pim.grid.mass_action.quick_export.xlsx_context
                 icon: download
@@ -167,7 +168,8 @@ datagrid:
                 route_parameters:
                     _format: xlsx
                     _contentType: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-                    _jobCode: xlsx_product_quick_export
+                    _jobCode: xlsx_product_grid_content_quick_export
+                    _displayedColumnsOnly: true
                 context:
                     withHeader: true
                 messages:
