@@ -7,6 +7,7 @@
 - PIM-5593: The context is now kept in the associations tab of the product edit form
 - PIM-5099: The catalog structure can now be exported in XLSX format (families, attributes, attribute options, association types and categories)
 - PIM-5097: The catalog structure can now be imported in XLSX format (families, attributes, attribute options, association types and categories)
+- PIM-5657: It is now possible to add custom tabs within the job profile and edit pages
 
 ## Scalability improvements
 
@@ -24,9 +25,20 @@
 - Simplify installation process and the loading of catalogs in Behat by using the import system and `akeneo:batch:job` commands.
 - PIM-5653: When using the Product Query Builder, it is now possible to filter on completeness without specifying a locale. Products with a matching completeness for at least one of the locales of the scope will be selected.
 - PIM-5653: Introduce a new storage-agnostic Product Reader using the PQB
+- PIM-5742: Schedule completeness for ORM is now performed directly through SQL
+- Integrates the AkeneoMeasureBundle in our main repository
+- TIP-245: Add datetime filters in the Product Query Builder, allowing to select products on "created at" and "updated at" fields.
+- PIM-5657: Introduce a `JobTemplateProvider` that holds the job template codes to use for creating, showing, editing job profiles. The provider uses configuration files in order to retrieve overridden templates for specific job names
 
 ## BC breaks
 
+- Remove properties editTemplate, showTemplate from `src\Akeneo\Component\Batch\Job\Job`.
+- Remove methods setShowTemplate, setEditTemplate from `src\Akeneo\Component\Batch\Job\Job`.
+- Change constructor of `Pim\Bundle\ImportExportBundle\Controller\JobProfileController`. Add `Akeneo\Bundle\BatchBundle\Connector\JobTemplateProviderInterface`
+- `Pim/Bundle/CatalogBundle/Doctrine/MongoDBODM/Filter/DateFilter` does not implement `Pim\Component\Catalog\Query\Filter\FieldFilterInterface`
+- `Pim/Bundle/CatalogBundle/Doctrine/ORM/Filter/DateFilter` does not implement `Pim\Component\Catalog\Query\Filter\FieldFilterInterface`
+- Change constructor of `Pim/Bundle/CatalogBundle/Doctrine/MongoDBODM/Filter/DateFilter`. Remove the third parameter `supportedFields`
+- Change constructor of `Pim/Bundle/CatalogBundle/Doctrine/ORM/Filter/DateFilter`. Remove the third parameter `supportedFields`
 - Remove `Pim\Bundle\CatalogBundle\Manager\ProductCategoryManager`
 - Remove methods `getTreesQB` and `getAllChildrenQueryBuilder` in `Akeneo\Component\Classification\Repository\CategoryRepositoryInterface`
 - Remove method `getItemIdsInCategory` in `Akeneo\Component\Classification\Repository\ItemCategoryRepositoryInterface`

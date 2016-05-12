@@ -6,7 +6,6 @@ use Pim\Bundle\CatalogBundle\Doctrine\MongoDBODM\ProductQueryUtility;
 use Pim\Component\Catalog\Exception\InvalidArgumentException;
 use Pim\Component\Catalog\Model\AttributeInterface;
 use Pim\Component\Catalog\Query\Filter\AttributeFilterInterface;
-use Pim\Component\Catalog\Query\Filter\FieldFilterInterface;
 use Pim\Component\Catalog\Query\Filter\Operators;
 use Pim\Component\Catalog\Validator\AttributeValidatorHelper;
 
@@ -17,38 +16,26 @@ use Pim\Component\Catalog\Validator\AttributeValidatorHelper;
  * @copyright 2014 Akeneo SAS (http://www.akeneo.com)
  * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class DateFilter extends AbstractAttributeFilter implements AttributeFilterInterface, FieldFilterInterface
+class DateFilter extends AbstractAttributeFilter implements AttributeFilterInterface
 {
-    /** @var array */
-    protected $supportedAttributes;
+    const DATETIME_FORMAT = 'Y-m-d';
 
     /** @var array */
-    protected $supportedFields;
+    protected $supportedAttributes;
 
     /**
      * @param AttributeValidatorHelper $attrValidatorHelper
      * @param array                    $supportedAttributes
-     * @param array                    $supportedFields
      * @param array                    $supportedOperators
      */
     public function __construct(
         AttributeValidatorHelper $attrValidatorHelper,
         array $supportedAttributes = [],
-        array $supportedFields = [],
         array $supportedOperators = []
     ) {
         $this->attrValidatorHelper = $attrValidatorHelper;
         $this->supportedAttributes = $supportedAttributes;
-        $this->supportedFields     = $supportedFields;
         $this->supportedOperators  = $supportedOperators;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsField($field)
-    {
-        return in_array($field, $this->supportedFields);
     }
 
     /**
@@ -79,43 +66,54 @@ class DateFilter extends AbstractAttributeFilter implements AttributeFilterInter
         }
 
         $field = ProductQueryUtility::getNormalizedValueFieldFromAttribute($attribute, $locale, $scope);
-        $this->addFieldFilter($field, $operator, $value);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function addFieldFilter($field, $operator, $value, $locale = null, $scope = null, $options = [])
-    {
-        if (Operators::IS_EMPTY !== $operator && Operators::IS_NOT_EMPTY !== $operator) {
-            $value = $this->formatValues($field, $value);
-        }
-
         $field = sprintf('%s.%s', ProductQueryUtility::NORMALIZED_FIELD, $field);
-        $this->applyFilter($value, $field, $operator);
+
+        $this->applyFilter($field, $operator, $value);
 
         return $this;
     }
 
     /**
-     * Get timestamp from data
+     * Apply the filter to the query with the given operator
      *
-     * @param \DateTime|string $data
-     * @param bool             $endOfDay
-     *
-     * @return int
+     * @param string $field
+     * @param string $operator
+     * @param mixed  $value
      */
-    protected function getTimestamp($data, $endOfDay = false)
+    protected function applyFilter($field, $operator, $value)
     {
-        if ($data instanceof \DateTime && true === $endOfDay) {
-            $data->setTime(23, 59, 59);
-        } elseif (!$data instanceof \DateTime && true === $endOfDay) {
-            $data = sprintf('%s 23:59:59', $data);
+        switch ($operator) {
+            case Operators::BETWEEN:
+                $this->qb->field($field)->gte($value[0]);
+                $this->qb->field($field)->lte($value[1]);
+                break;
+            case Operators::NOT_BETWEEN:
+                $this->qb->addAnd(
+                    $this->qb->expr()
+                        ->addOr($this->qb->expr()->field($field)->lt($value[0]))
+                        ->addOr($this->qb->expr()->field($field)->gt($value[1]))
+                );
+                break;
+            case Operators::GREATER_THAN:
+                $this->qb->field($field)->gt($value);
+                break;
+            case Operators::LOWER_THAN:
+                $this->qb->field($field)->lt($value);
+                break;
+            case Operators::EQUALS:
+                $this->qb->field($field)->equals($value);
+                break;
+            case Operators::NOT_EQUAL:
+                $this->qb->field($field)->exists(true);
+                $this->qb->field($field)->notEqual($value);
+                break;
+            case Operators::IS_EMPTY:
+                $this->qb->field($field)->exists(false);
+                break;
+            case Operators::IS_NOT_EMPTY:
+                $this->qb->field($field)->exists(true);
+                break;
         }
-
-        return $data instanceof \DateTime ? $data->getTimestamp() : strtotime($data);
     }
 
     /**
@@ -131,7 +129,7 @@ class DateFilter extends AbstractAttributeFilter implements AttributeFilterInter
         if (is_array($value) && 2 !== count($value)) {
             throw InvalidArgumentException::expected(
                 $type,
-                'array with 2 elements, string or \Datetime',
+                'array with 2 elements, string or \DateTime',
                 'filter',
                 'date',
                 print_r($value, true)
@@ -155,95 +153,44 @@ class DateFilter extends AbstractAttributeFilter implements AttributeFilterInter
      * @param string $type
      * @param mixed  $value
      *
-     * @return string
+     * @throws InvalidArgumentException
+     *
+     * @return int|null
      */
     protected function formatSingleValue($type, $value)
     {
+        if (null === $value) {
+            return $value;
+        }
+
         if ($value instanceof \DateTime) {
-            $value = $value->format('Y-m-d');
-        } elseif (is_string($value)) {
-            $this->validateDateFormat($type, $value);
-        } elseif (null !== $value) {
-            throw InvalidArgumentException::expected(
-                $type,
-                'array with 2 elements, string or \Datetime',
-                'filter',
-                'date',
-                print_r($value, true)
-            );
+            return $value->getTimestamp();
         }
 
-        return $value;
-    }
+        if (is_string($value)) {
+            $dateTime = \DateTime::createFromFormat(static::DATETIME_FORMAT, $value);
 
-    /**
-     * Check if the date format is valid
-     *
-     * @param string $type
-     * @param string $value
-     */
-    protected function validateDateFormat($type, $value)
-    {
-        $dateValues = explode('-', $value);
-
-        if (count($dateValues) !== 3
-            || (!is_numeric($dateValues[0]) || !is_numeric($dateValues[1]) || !is_numeric($dateValues[2]))
-            || !checkdate($dateValues[1], $dateValues[2], $dateValues[0])
-        ) {
-            throw InvalidArgumentException::expected(
-                $type,
-                'a string with the format yyyy-mm-dd',
-                'filter',
-                'date',
-                $value
-            );
-        }
-    }
-
-    /**
-     * Apply the filter to the query with the given operator
-     *
-     * @param mixed  $value
-     * @param string $field
-     * @param string $operator
-     */
-    protected function applyFilter($value, $field, $operator)
-    {
-        switch ($operator) {
-            case Operators::BETWEEN:
-                $this->qb->field($field)->gte($this->getTimestamp($value[0]));
-                $this->qb->field($field)->lte($this->getTimestamp($value[1], true));
-                break;
-            case Operators::NOT_BETWEEN:
-                $this->qb->addAnd(
-                    $this->qb->expr()
-                        ->addOr($this->qb->expr()->field($field)->lte($this->getTimestamp($value[0])))
-                        ->addOr($this->qb->expr()->field($field)->gte($this->getTimestamp($value[1], true)))
+            if (!$dateTime || 0 < $dateTime->getLastErrors()['warning_count']) {
+                throw InvalidArgumentException::expected(
+                    $type,
+                    'a string with the format yyyy-mm-dd',
+                    'filter',
+                    'date',
+                    $value
                 );
-                break;
-            case Operators::GREATER_THAN:
-                $this->qb->field($field)->gt($this->getTimestamp($value, true));
-                break;
-            case Operators::LOWER_THAN:
-                $this->qb->field($field)->lt($this->getTimestamp($value));
-                break;
-            case Operators::EQUALS:
-                $this->qb->field($field)->gte($this->getTimestamp($value));
-                $this->qb->field($field)->lte($this->getTimestamp($value, true));
-                break;
-            case Operators::NOT_EQUAL:
-                $this->qb->addAnd(
-                    $this->qb->expr()
-                        ->addOr($this->qb->expr()->field($field)->lt($this->getTimestamp($value)))
-                        ->addOr($this->qb->expr()->field($field)->gt($this->getTimestamp($value, true)))
-                );
-                break;
-            case Operators::IS_EMPTY:
-                $this->qb->field($field)->exists(false);
-                break;
-            case Operators::IS_NOT_EMPTY:
-                $this->qb->field($field)->exists(true);
-                break;
+            }
+
+            $dateTime->setTime(0, 0, 0);
+
+            return $dateTime->getTimestamp();
         }
+
+        throw InvalidArgumentException::expected(
+            $type,
+            'array with 2 elements, string or \DateTime',
+            'filter',
+            'date',
+            print_r($value, true)
+        );
     }
 }
