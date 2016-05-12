@@ -154,8 +154,6 @@ class AttributeNormalizerSpec extends ObjectBehavior
                 'options'                => 'Code:size,en_US:big,fr_FR:grand',
                 'sort_order'             => 1,
                 'required'               => 0,
-                'metric_family'          => 'Length',
-                'default_metric_unit'    => 'Centimenter',
             ]
         );
     }
