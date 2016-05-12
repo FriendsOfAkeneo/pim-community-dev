@@ -13,6 +13,7 @@ services:
     # Managers
     pim_catalog.manager.category:
         class: %pim_catalog.manager.category.class%
+        deprecated: 'The "%service_id%" service is deprecated and will be removed in 1.6'
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@pim_catalog.repository.category'
