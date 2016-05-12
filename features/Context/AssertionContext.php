@@ -235,20 +235,6 @@ class AssertionContext extends RawMinkContext
      * This function was disabled because it generates too many failing tests. Warning, some tests are always
      * using it, and it checks nothing at all.
      *
-     * @deprecated Will be removed in 1.6. Use iShouldSeeTheFlashMessage instead.
-     *
-     * @param string $text
-     *
-     * @Then /^I should see (?:a )?flash message "([^"]*)"$/
-     *
-     * @return bool
-     */
-    public function iShouldSeeFlashMessage($text)
-    {
-        return true;
-    }
-
-    /**
      * @param $text
      *
      * @Then /^I should see the flash message "([^"]*)"$/
