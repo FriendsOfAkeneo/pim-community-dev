@@ -78,7 +78,7 @@ class XlsxSimpleWriterSpec extends ObjectBehavior
 
     function it_writes_the_xlsx_file($flatRowBuffer, BufferInterface $buffer)
     {
-        $this->setLinesPerFiles(10000);
+        $this->setLinesPerFile(10000);
         $flatRowBuffer->count()->willReturn(10000);
         $flatRowBuffer->getHeaders()->willReturn(['code', 'type', 'label-en_US', 'label-de_DE']);
         $flatRowBuffer->getBuffer()->willReturn($buffer);
@@ -108,7 +108,7 @@ class XlsxSimpleWriterSpec extends ObjectBehavior
                         'help'  => 'pim_connector.export.withHeader.help'
                     ]
                 ];
-                $expectedLinesPerFiles = [
+                $expectedLinesPerFile = [
                     'type'    => 'integer',
                     'options' => [
                         'label'       => 'pim_connector.export.lines_per_files.label',
@@ -116,15 +116,15 @@ class XlsxSimpleWriterSpec extends ObjectBehavior
                         'empty_data'  => 10000,
                     ]
                 ];
-                $constraints = $config['linesPerFiles']['options']['constraints'];
-                unset($config['linesPerFiles']['options']['constraints']);
+                $constraints = $config['linesPerFile']['options']['constraints'];
+                unset($config['linesPerFile']['options']['constraints']);
 
-                if ($expectedLinesPerFiles !== $config['linesPerFiles']) {
-                    throw new FailureException('LinesPerFiles configuration doesn\'t match expecting one');
+                if ($expectedLinesPerFile !== $config['linesPerFile']) {
+                    throw new FailureException('LinesPerFile configuration doesn\'t match expecting one');
                 }
 
                 if (!$constraints[0] instanceof GreaterThan || 1 !== $constraints[0]->value) {
-                    throw new FailureException('Expecting to get a GreaterThan 1 constraint for linesPerFiles');
+                    throw new FailureException('Expecting to get a GreaterThan 1 constraint for linesPerFile');
                 }
 
                 if ($expectedFilePath !== $config['filePath']) {

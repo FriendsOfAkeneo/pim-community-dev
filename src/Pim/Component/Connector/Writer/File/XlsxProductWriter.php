@@ -27,7 +27,7 @@ class XlsxProductWriter extends AbstractFileWriter implements ItemWriterInterfac
     protected $writtenFiles;
 
     /** @var int */
-    protected $linesPerFiles;
+    protected $linesPerFile;
 
     /** @var int */
     protected $defaultLinesPerFile;
@@ -95,7 +95,7 @@ class XlsxProductWriter extends AbstractFileWriter implements ItemWriterInterfac
     {
         $pathPattern = $this->getPath();
         if ($this->areSeveralFilesNeeded()) {
-            $pathPattern = $this->getCustomFilePath($this->getPath());
+            $pathPattern = $this->getNumberedFilePath($this->getPath());
         }
 
         $headers    = $this->flatRowBuffer->getHeaders();
@@ -104,7 +104,7 @@ class XlsxProductWriter extends AbstractFileWriter implements ItemWriterInterfac
         $fileCount = 1;
         $writtenLinesCount = 0;
         foreach ($this->flatRowBuffer->getBuffer() as $count => $incompleteItem) {
-            if (0 === $writtenLinesCount % $this->getLinesPerFiles()) {
+            if (0 === $writtenLinesCount % $this->getLinesPerFile()) {
                 $filePath = $this->resolveFilePath($pathPattern, $fileCount);
 
                 $writtenLinesCount = 0;
@@ -120,7 +120,7 @@ class XlsxProductWriter extends AbstractFileWriter implements ItemWriterInterfac
                 $this->stepExecution->incrementSummaryInfo('write');
             }
 
-            if (0 === $writtenLinesCount % $this->getLinesPerFiles() || $this->flatRowBuffer->count() === $count + 1) {
+            if (0 === $writtenLinesCount % $this->getLinesPerFile() || $this->flatRowBuffer->count() === $count + 1) {
                 $writer->close();
                 $this->writtenFiles[$filePath] = basename($filePath);
                 $writtenLinesCount = 0;
@@ -149,7 +149,7 @@ class XlsxProductWriter extends AbstractFileWriter implements ItemWriterInterfac
                     'help'  => 'pim_connector.export.filePath.help',
                 ],
             ],
-            'linesPerFiles' => [
+            'linesPerFile' => [
                 'type'    => 'integer',
                 'options' => [
                     'label'       => 'pim_connector.export.lines_per_files.label',
@@ -189,17 +189,17 @@ class XlsxProductWriter extends AbstractFileWriter implements ItemWriterInterfac
     /**
      * @return int
      */
-    public function getLinesPerFiles()
+    public function getLinesPerFile()
     {
-        return $this->linesPerFiles;
+        return $this->linesPerFile;
     }
 
     /**
-     * @param int $linesPerFiles
+     * @param int $linesPerFile
      */
-    public function setLinesPerFiles($linesPerFiles)
+    public function setLinesPerFile($linesPerFile)
     {
-        $this->linesPerFiles = $linesPerFiles;
+        $this->linesPerFile = $linesPerFile;
     }
 
     /**
@@ -223,11 +223,11 @@ class XlsxProductWriter extends AbstractFileWriter implements ItemWriterInterfac
      */
     protected function areSeveralFilesNeeded()
     {
-        return $this->flatRowBuffer->count() > $this->getLinesPerFiles();
+        return $this->flatRowBuffer->count() > $this->getLinesPerFile();
     }
 
     /**
-     * Return the given file path in terms of the current file count if needed
+     * Return the file path including file count if needed
      *
      * @param string $pathPattern
      * @param int    $currentFileCount
@@ -254,14 +254,14 @@ class XlsxProductWriter extends AbstractFileWriter implements ItemWriterInterfac
      * Return the given file path with %fileNb% placeholder just before the extension of the file
      * ie: in -> '/path/myFile.txt' ; out -> '/path/myFile%fileNb%.txt'
      *
-     * @param string $fullFilePath
+     * @param string $originalFilePath
      *
      * @return string
      */
-    protected function getCustomFilePath($fullFilePath)
+    protected function getNumberedFilePath($originalFilePath)
     {
-        $extension = '.' . pathinfo($fullFilePath, PATHINFO_EXTENSION);
-        $filePath  = strstr($fullFilePath, $extension, true);
+        $extension = '.' . pathinfo($originalFilePath, PATHINFO_EXTENSION);
+        $filePath  = strstr($originalFilePath, $extension, true);
 
         return $filePath . '%fileNb%' . $extension;
     }
