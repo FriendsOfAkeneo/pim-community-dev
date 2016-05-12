@@ -292,7 +292,7 @@ class ProductEditForm extends Form
         $this->spin(function () use ($fieldContainer, $link) {
             return $link->find('css', '.select2-chosen')->getText() ===
                    $fieldContainer->find('css', 'input.select-field')->getValue();
-        }, sprintf('Value has not been filled by select2', $link->getHtml()));
+        }, 'Value has not been filled by select2');
 
         $link->click();
 
