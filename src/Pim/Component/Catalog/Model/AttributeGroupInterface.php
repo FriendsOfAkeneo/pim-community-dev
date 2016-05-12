@@ -130,6 +130,13 @@ interface AttributeGroupInterface extends TranslatableInterface, ReferableInterf
     public function hasAttribute(AttributeInterface $attribute);
 
     /**
+     * Reset attribute collection in the group
+     *
+     * @return AttributeGroupInterface
+     */
+    public function resetAttributes();
+
+    /**
      * @return int
      */
     public function getMaxAttributeSortOrder();

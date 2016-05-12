@@ -249,3 +249,33 @@ services:
           arguments:
               - '@pim_serializer.normalizer.flat.association_type'
               - 'flat'
+
+    pim_connector.processor.normalization.channel.flat:
+        class: %pim_connector.processor.normalization.simple.class%
+        arguments:
+            - '@pim_serializer.normalizer.flat.channel'
+            - 'flat'
+
+    pim_connector.processor.normalization.locale.flat:
+        class: %pim_connector.processor.normalization.simple.class%
+        arguments:
+            - '@pim_serializer.normalizer.flat.locale'
+            - 'flat'
+
+    pim_connector.processor.normalization.attribute_group.flat:
+        class: %pim_connector.processor.normalization.simple.class%
+        arguments:
+            - '@pim_serializer.normalizer.flat.attribute_group'
+            - 'flat'
+
+    pim_connector.processor.normalization.currency.flat:
+        class: %pim_connector.processor.normalization.simple.class%
+        arguments:
+            - '@pim_serializer.normalizer.flat.currency'
+            - 'flat'
+
+    pim_connector.processor.normalization.group_type.flat:
+        class: %pim_connector.processor.normalization.simple.class%
+        arguments:
+            - '@pim_serializer.normalizer.flat.group_type'
+            - 'flat'

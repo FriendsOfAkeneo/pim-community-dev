@@ -207,6 +207,21 @@ services:
     pim_connector.writer.file.csv_family:
         alias: pim_connector.writer.file.csv
 
+    pim_connector.writer.file.csv_channel:
+        alias: pim_connector.writer.file.csv
+
+    pim_connector.writer.file.csv_locale:
+        alias: pim_connector.writer.file.csv
+
+    pim_connector.writer.file.csv_attribute_group:
+        alias: pim_connector.writer.file.csv
+
+    pim_connector.writer.file.csv_currency:
+        alias: pim_connector.writer.file.csv
+
+    pim_connector.writer.file.csv_group_type:
+        alias: pim_connector.writer.file.csv
+
     # XLSX
     pim_connector.writer.file.xlsx:
         class: %pim_connector.writer.file.xlsx_simple.class%
@@ -244,4 +259,19 @@ services:
         alias: pim_connector.writer.file.xlsx
 
     pim_connector.writer.file.xlsx_association_type:
+        alias: pim_connector.writer.file.xlsx
+
+    pim_connector.writer.file.xlsx_channel:
+        alias: pim_connector.writer.file.xlsx
+
+    pim_connector.writer.file.xlsx_locale:
+        alias: pim_connector.writer.file.xlsx
+
+    pim_connector.writer.file.xlsx_attribute_group:
+        alias: pim_connector.writer.file.xlsx
+
+    pim_connector.writer.file.xlsx_currency:
+        alias: pim_connector.writer.file.xlsx
+
+    pim_connector.writer.file.xlsx_group_type:
         alias: pim_connector.writer.file.xlsx

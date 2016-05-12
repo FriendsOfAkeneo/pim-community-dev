@@ -30,4 +30,9 @@ interface GroupTypeRepositoryInterface extends IdentifiableObjectRepositoryInter
      * @return string
      */
     public function getTypeByGroup($code);
+
+    /**
+     * @return mixed
+     */
+    public function getVariantGroupType();
 }

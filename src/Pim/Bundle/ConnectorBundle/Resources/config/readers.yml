@@ -90,6 +90,9 @@ services:
     pim_connector.reader.file.csv_currency:
         alias: pim_connector.reader.file.csv
 
+    pim_connector.reader.file.csv_group_type:
+        alias: pim_connector.reader.file.csv
+
     pim_connector.reader.file.csv_product:
         class: %pim_connector.reader.file.csv_product.class%
         arguments:
@@ -131,4 +134,19 @@ services:
         alias: pim_connector.reader.file.xlsx
 
     pim_connector.reader.file.xlsx_category:
+        alias: pim_connector.reader.file.xlsx
+
+    pim_connector.reader.file.xlsx_channel:
+        alias: pim_connector.reader.file.xlsx
+
+    pim_connector.reader.file.xlsx_locale:
+        alias: pim_connector.reader.file.xlsx
+
+    pim_connector.reader.file.xlsx_attribute_group:
+        alias: pim_connector.reader.file.xlsx
+
+    pim_connector.reader.file.xlsx_currency:
+        alias: pim_connector.reader.file.xlsx
+
+    pim_connector.reader.file.xlsx_group_type:
         alias: pim_connector.reader.file.xlsx

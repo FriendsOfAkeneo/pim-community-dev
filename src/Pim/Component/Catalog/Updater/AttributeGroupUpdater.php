@@ -74,6 +74,8 @@ class AttributeGroupUpdater implements ObjectUpdaterInterface
         } elseif ('sort_order' == $field) {
             $attributeGroup->setSortOrder($data);
         } elseif ('attributes' == $field) {
+            $attributeGroup->resetAttributes();
+
             foreach ($data as $attributeCode) {
                 $attribute = $this->findAttribute($attributeCode);
                 if (null !== $attribute) {

@@ -175,8 +175,10 @@ class AttributeGroup implements AttributeGroupInterface
      */
     public function addAttribute(AttributeInterface $attribute)
     {
-        $this->attributes[] = $attribute;
-        $attribute->setGroup($this);
+        if (!$this->hasAttribute($attribute)) {
+            $this->attributes[] = $attribute;
+            $attribute->setGroup($this);
+        }
 
         return $this;
     }
@@ -206,6 +208,16 @@ class AttributeGroup implements AttributeGroupInterface
     public function hasAttribute(AttributeInterface $attribute)
     {
         return $this->attributes->contains($attribute);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function resetAttributes()
+    {
+        $this->attributes = new ArrayCollection();
+
+        return $this;
     }
 
     /**

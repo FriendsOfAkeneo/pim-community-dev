@@ -55,6 +55,7 @@ class AttributeGroupUpdaterSpec extends ObjectBehavior
 
         $attributeGroup->setCode('sizes')->shouldBeCalled();
         $attributeGroup->setSortOrder(1)->shouldBeCalled();
+        $attributeGroup->resetAttributes()->shouldBeCalled();
 
         $attributeRepository->findOneByIdentifier('size')->willReturn($attributeSize);
         $attributeRepository->findOneByIdentifier('main_color')->willReturn($attributeMainColor);
