@@ -11,7 +11,7 @@ use Pim\Component\Connector\Writer\File\FlatItemBuffer;
 use Pim\Component\Connector\Writer\File\BulkFileExporter;
 use Prophecy\Argument;
 use Symfony\Component\Validator\Constraints\GreaterThan;
-use Symfony\Component\Validator\Constraints\Type as ConstraintsType;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class XlsxProductWriterSpec extends ObjectBehavior
 {
@@ -114,6 +114,7 @@ class XlsxProductWriterSpec extends ObjectBehavior
 
     function it_has_configuration()
     {
+        $this->setLinesPerFile(10);
         $this->getConfigurationFields()->shouldReturnConfiguration();
     }
 
@@ -137,9 +138,9 @@ class XlsxProductWriterSpec extends ObjectBehavior
                 $expectedLinesPerFile = [
                     'type'    => 'integer',
                     'options' => [
-                        'label'       => 'pim_connector.export.lines_per_files.label',
-                        'help'        => 'pim_connector.export.lines_per_files.help',
-                        'empty_data'  => 10000,
+                        'label' => 'pim_connector.export.lines_per_files.label',
+                        'help'  => 'pim_connector.export.lines_per_files.help',
+                        'data'  => 10
                     ]
                 ];
                 $constraints = $config['linesPerFile']['options']['constraints'];
@@ -149,7 +150,11 @@ class XlsxProductWriterSpec extends ObjectBehavior
                     throw new FailureException('LinesPerFile configuration doesn\'t match expecting one');
                 }
 
-                if (!$constraints[0] instanceof GreaterThan || 1 !== $constraints[0]->value) {
+                if (!$constraints[0] instanceof NotBlank) {
+                    throw new FailureException('Expecting to get a NotBlank constraint for linesPerFile');
+                }
+
+                if (!$constraints[1] instanceof GreaterThan || 1 !== $constraints[1]->value) {
                     throw new FailureException('Expecting to get a GreaterThan 1 constraint for linesPerFile');
                 }
 

@@ -10,7 +10,7 @@ use Pim\Component\Connector\Writer\File\FilePathResolverInterface;
 use Pim\Component\Connector\Writer\File\FlatItemBuffer;
 use Prophecy\Argument;
 use Symfony\Component\Validator\Constraints\GreaterThan;
-use Symfony\Component\Validator\Constraints\Type as ConstraintsType;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class XlsxSimpleWriterSpec extends ObjectBehavior
 {
@@ -88,6 +88,7 @@ class XlsxSimpleWriterSpec extends ObjectBehavior
 
     function it_has_configuration()
     {
+        $this->setLinesPerFile(10000);
         $this->getConfigurationFields()->shouldReturnConfiguration();
     }
 
@@ -111,9 +112,9 @@ class XlsxSimpleWriterSpec extends ObjectBehavior
                 $expectedLinesPerFile = [
                     'type'    => 'integer',
                     'options' => [
-                        'label'       => 'pim_connector.export.lines_per_files.label',
-                        'help'        => 'pim_connector.export.lines_per_files.help',
-                        'empty_data'  => 10000,
+                        'label' => 'pim_connector.export.lines_per_files.label',
+                        'help'  => 'pim_connector.export.lines_per_files.help',
+                        'data'  => 10000,
                     ]
                 ];
                 $constraints = $config['linesPerFile']['options']['constraints'];
@@ -123,13 +124,18 @@ class XlsxSimpleWriterSpec extends ObjectBehavior
                     throw new FailureException('LinesPerFile configuration doesn\'t match expecting one');
                 }
 
-                if (!$constraints[0] instanceof GreaterThan || 1 !== $constraints[0]->value) {
+                if (!$constraints[0] instanceof NotBlank) {
+                    throw new FailureException('Expecting to get a NotBlank constraint for linesPerFile');
+                }
+
+                if (!$constraints[1] instanceof GreaterThan || 1 !== $constraints[1]->value) {
                     throw new FailureException('Expecting to get a GreaterThan 1 constraint for linesPerFile');
                 }
 
                 if ($expectedFilePath !== $config['filePath']) {
                     throw new FailureException('FilePath configuration doesn\'t match expecting one');
                 }
+
                 if ($expectedWithHeader !== $config['withHeader']) {
                     throw new FailureException('WithHeader configuration doesn\'t match expecting one');
                 }

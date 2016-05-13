@@ -6,6 +6,7 @@ use Box\Spout\Common\Type;
 use Box\Spout\Writer\WriterFactory;
 use Box\Spout\Writer\WriterInterface;
 use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Write simple data into a XLSX file on the local filesystem
@@ -118,8 +119,9 @@ class XlsxSimpleWriter extends AbstractFileWriter implements ArchivableWriterInt
                 'options' => [
                     'label'       => 'pim_connector.export.lines_per_files.label',
                     'help'        => 'pim_connector.export.lines_per_files.help',
-                    'empty_data'  => $this->defaultLinesPerFile,
+                    'data'        => $this->getLinesPerFile(),
                     'constraints' => [
+                        new NotBlank(),
                         new GreaterThan(1)
                     ]
                 ]
@@ -163,6 +165,8 @@ class XlsxSimpleWriter extends AbstractFileWriter implements ArchivableWriterInt
      */
     public function setLinesPerFile($linesPerFile)
     {
+        $linesPerFile = null === $linesPerFile ? $this->defaultLinesPerFile : $linesPerFile;
+
         $this->linesPerFile = $linesPerFile;
     }
 
