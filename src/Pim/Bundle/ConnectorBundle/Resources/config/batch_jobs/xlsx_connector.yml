@@ -313,7 +313,7 @@ connector:
                 export:
                     title:     pim_connector.jobs.xlsx_channel_export.export.title
                     services:
-                        reader:    pim_base_connector.reader.orm.channel
+                        reader:    pim_connector.reader.orm.channel
                         processor: pim_connector.processor.normalization.channel.flat
                         writer:    pim_connector.writer.file.xlsx_channel
         xlsx_locale_export:
@@ -323,7 +323,7 @@ connector:
                 export:
                     title:     pim_connector.jobs.xlsx_locale_export.export.title
                     services:
-                        reader:    pim_base_connector.reader.orm.locale
+                        reader:    pim_connector.reader.orm.locale
                         processor: pim_connector.processor.normalization.locale.flat
                         writer:    pim_connector.writer.file.xlsx_locale
         xlsx_attribute_group_export:
@@ -333,7 +333,7 @@ connector:
                 export:
                     title:     pim_connector.jobs.xlsx_attribute_group_export.export.title
                     services:
-                        reader:    pim_base_connector.reader.orm.attribute_group
+                        reader:    pim_connector.reader.orm.attribute_group
                         processor: pim_connector.processor.normalization.attribute_group.flat
                         writer:    pim_connector.writer.file.xlsx_attribute_group
         xlsx_currency_export:
@@ -343,7 +343,7 @@ connector:
                 export:
                     title:     pim_connector.jobs.xlsx_currency_export.export.title
                     services:
-                        reader:    pim_base_connector.reader.orm.currency
+                        reader:    pim_connector.reader.orm.currency
                         processor: pim_connector.processor.normalization.currency.flat
                         writer:    pim_connector.writer.file.xlsx_currency
         xlsx_group_type_export:
@@ -353,6 +353,6 @@ connector:
                 export:
                     title:     pim_connector.jobs.xlsx_group_type_export.export.title
                     services:
-                        reader:    pim_base_connector.reader.orm.group_type
+                        reader:    pim_connector.reader.orm.group_type
                         processor: pim_connector.processor.normalization.group_type.flat
                         writer:    pim_connector.writer.file.xlsx_group_type
